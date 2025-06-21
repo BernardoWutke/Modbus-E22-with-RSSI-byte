@@ -258,13 +258,19 @@ void ModbusRTUTemplate::task() {
 	  if (isMaster) cleanup();
       return;
     }
-    for (uint8_t i=0 ; i < _len ; i++) {
+    for (uint8_t i=0 ; i < _len - 1 ; i++) {
 		_frame[i] = _port->read();   // read data + crc
 		#if defined(MODBUSRTU_DEBUG)
 		Serial.print(_frame[i], HEX);
 		Serial.print(" ");
 		#endif
 	}
+
+	if (_port->available() > 0) {
+        uint8_t e22_signal = _port->read();
+        if (onE22Signal) onE22Signal(e22_signal);
+    }
+	
 	#if defined(MODBUSRTU_DEBUG)
 	Serial.println();
 	#endif
@@ -307,10 +313,8 @@ void ModbusRTUTemplate::task() {
 		}
     }
 
-	 if (_port->available() > 0) {
-        uint8_t e22_signal = _port->read();
-        if (onE22Signal) onE22Signal(e22_signal);
-    }
+	
+
     // Cleanup
 cleanup:
     free(_frame);
