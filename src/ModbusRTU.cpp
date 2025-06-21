@@ -258,7 +258,9 @@ void ModbusRTUTemplate::task() {
 	  if (isMaster) cleanup();
       return;
     }
-    for (uint8_t i=0 ; i < _len - 1 ; i++) {
+	//decrease _len by 1, because we already read address byte
+	_len--;
+    for (uint8_t i=0 ; i < _len; i++) {
 		_frame[i] = _port->read();   // read data + crc
 		#if defined(MODBUSRTU_DEBUG)
 		Serial.print(_frame[i], HEX);
@@ -270,7 +272,7 @@ void ModbusRTUTemplate::task() {
         uint8_t e22_signal = _port->read();
         if (onE22Signal) onE22Signal(e22_signal);
     }
-	
+
 	#if defined(MODBUSRTU_DEBUG)
 	Serial.println();
 	#endif
