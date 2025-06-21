@@ -304,6 +304,11 @@ void ModbusRTUTemplate::task() {
 				rawSend(address, _frame, _len);
 		}
     }
+
+	 if (_port->available() > 0) {
+        uint8_t e22_signal = _port->read();
+        if (onE22Signal) onE22Signal(e22_signal);
+    }
     // Cleanup
 cleanup:
     free(_frame);

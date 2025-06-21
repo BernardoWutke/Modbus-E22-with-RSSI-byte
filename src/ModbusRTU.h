@@ -42,6 +42,7 @@ class ModbusRTUTemplate : public Modbus {
 		uint16_t crc16(uint8_t address, uint8_t* frame, uint8_t pdulen);
 		uint16_t crc16_alt(uint8_t address, uint8_t* frame, uint8_t pduLen);
     public:
+	    std::function<void(uint8_t)> onE22Signal; // Hook para o byte extra
 		void setBaudrate(uint32_t baud = -1);
 		uint32_t calculateMinimumInterFrameTime(uint32_t baud, uint8_t char_bits = 11);
 		void setInterFrameTime(uint32_t t_us);
