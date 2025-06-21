@@ -254,12 +254,17 @@ void ModbusRTUTemplate::task()
 	else
 	{ // For slave wait for whole message to come (unless MODBUSRTU_MAX_READMS reached)
 		uint32_t taskStart = micros();
-		while (micros() - t < _t) {
-			if (_port->available() > _len) {
+		while (micros() - t < _t)
+		{ // Wait data whitespace
+			if (_port->available() > _len)
+			{
 				_len = _port->available();
 				t = micros();
 			}
-			yield(); // Alimenta o watchdog
+			if (micros() - taskStart > MODBUSRTU_MAX_READ_US)
+			{ // Prevent from task() executed too long
+				return;
+			}
 		}
 	}
 
