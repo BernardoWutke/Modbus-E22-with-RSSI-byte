@@ -7,7 +7,7 @@
 */
 #include "ModbusRTU.h"
 
-#define MODBUSRTU_DEBUG
+
 
 // Table of CRC values
 static const uint16_t _auchCRC[] PROGMEM = {
