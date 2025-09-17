@@ -7,8 +7,6 @@
 */
 #include "ModbusRTU.h"
 
-
-
 // Table of CRC values
 static const uint16_t _auchCRC[] PROGMEM = {
 	0x0000, 0xC1C0, 0x81C1, 0x4001, 0x01C3, 0xC003, 0x8002, 0x41C2, 0x01C6, 0xC006, 0x8007, 0x41C7, 0x0005, 0xC1C5, 0x81C4,
@@ -202,7 +200,7 @@ uint16_t ModbusRTUTemplate::send(uint8_t slaveId, TAddress startreg, cbTransacti
 {
 	bool result = false;
 	if ((!isMaster || !_slaveId) && _len && _frame)
-	{	// Check if waiting for previous request result and _frame filled
+	{ // Check if waiting for previous request result and _frame filled
 		// if (_len && _frame) { // Check if waiting for previous request result and _frame filled
 		rawSend(slaveId, _frame, _len);
 		if (waitResponse && slaveId)
@@ -383,7 +381,12 @@ void ModbusRTUTemplate::task()
 			if (address == MODBUSRTU_BROADCAST)
 				_reply = Modbus::REPLY_OFF; // No reply for Broadcasts
 			if (_reply != Modbus::REPLY_OFF)
+			{
 				rawSend(address, _frame, _len);
+				
+				if (onAckSent)
+					onAckSent(address, _frame);
+			}
 		}
 	}
 
